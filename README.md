@@ -1,7 +1,7 @@
 # mysql2h2-plus
 借鉴已开源的技术，不断完善转换的IDEA 插件
 
-可以打包后直接拖入IDEA并使用
+可以打包后直接拖入IDEA并使用 / 或直接下载 https://github.com/ChenYilei2016/mysql2h2-plus/blob/master/src/main/resources/mysql2h2-plus-1.0.0.zip
 
 mysql2h2-plus-1.0.0.zip
 
