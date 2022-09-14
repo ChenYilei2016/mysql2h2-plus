@@ -12,7 +12,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
@@ -55,7 +54,6 @@ public class MysqlToH2Utils {
 
         h2Sql = createIndexUnique(h2Sql);
 
-        //unique主键
         return h2Sql;
     }
 

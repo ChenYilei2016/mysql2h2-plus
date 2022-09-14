@@ -41,7 +41,7 @@ public class MysqlToH2Dlg extends JDialog {
         /*弹框最小宽1150,高680*/
         this.setPreferredSize(new Dimension(Math.max((int) (0.7 * screenSize.getWidth()), 1150),
                 Math.max((int) (0.7 * screenSize.getHeight()), 680)));
-        setTitle("mysql to h2");
+        setTitle("mysql to h2 plus");
         JPanel mainPanel = new JPanel(new BorderLayout());
         setContentPane(mainPanel);
         setAlwaysOnTop(true);
@@ -56,6 +56,7 @@ public class MysqlToH2Dlg extends JDialog {
         mainPanel.add(ActionManager.getInstance().createActionToolbar("Tool bar",
                 topActionGroup(project), true).getComponent(), BorderLayout.NORTH);
         mainPanel.add(splitter, BorderLayout.CENTER);
+
     }
 
     private static @NotNull Icon load(@NotNull String path) {
@@ -123,6 +124,7 @@ public class MysqlToH2Dlg extends JDialog {
         try {
             final String convertTxt = MysqlToH2Utils.convert(mysqlEditor.getDocument().getText());
             h2TxtPnl.setText(convertTxt);
+            mysqlEditor.getDocument().setText("");
         } catch (Exception e) {
             myDlg.setAlwaysOnTop(false);
             Messages.showWarningDialog("Error:" + e.getMessage(), "Warn");
