@@ -35,14 +35,15 @@ public class MysqlToH2Dlg extends JDialog {
 
     private static Editor mysqlEditor;
     private final JTextPane h2TxtPnl;
+    private static JPanel mainPanel;
 
     public MysqlToH2Dlg(Project project) {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         /*弹框最小宽1150,高680*/
         this.setPreferredSize(new Dimension(Math.max((int) (0.7 * screenSize.getWidth()), 1150),
                 Math.max((int) (0.7 * screenSize.getHeight()), 680)));
-        setTitle("mysql to h2 plus");
-        JPanel mainPanel = new JPanel(new BorderLayout());
+        setTitle("mysql to h2 plus , 作者: chenyilei, 文本较大时候转换会卡 ");
+        mainPanel = new JPanel(new BorderLayout());
         setContentPane(mainPanel);
         setAlwaysOnTop(true);
 
@@ -103,6 +104,19 @@ public class MysqlToH2Dlg extends JDialog {
             @Override
             public void update(@NotNull AnActionEvent e) {
                 e.getPresentation().setEnabled(!BaseUtils.isEmpty(h2TxtPnl.getText()));
+            }
+        });
+        actionGroup.addAction(new AnAction("Refresh", "Refresh", AllIcons.Actions.GC) {
+            @Override
+            public void actionPerformed(@NotNull AnActionEvent e) {
+                try {
+                    myDlg.setAlwaysOnTop(false);
+                    h2TxtPnl.setText("");
+                    mysqlEditor.getDocument().setText("");
+                    mainPanel.updateUI();
+                } finally {
+                    myDlg.setAlwaysOnTop(true);
+                }
             }
         });
         return actionGroup;
