@@ -1,0 +1,33 @@
+create table fenghuo_metadata.fenghuo_product_ad
+(
+    id                bigint                               not null
+        primary key,
+    profile_id        varchar(64)                          not null comment '关联的市场店铺Id',
+    ad_id             varchar(64)                          null comment '推广品ID',
+    ad_group_id       varchar(64)                          null comment '关联的市场店铺Id',
+    campaign_id       varchar(64)                          null comment '亚马逊Id',
+    sku               varchar(128)                         null comment 'sku',
+    asin              varchar(128)                         null comment 'asin',
+    state             varchar(32)                          null comment 'The state of the campaign. e.g.,enabled, paused, archived',
+    serving_status    varchar(64)                          null comment 'The status of the campaign.e.g.,[ ADVERTISER_STATUS_ENABLED, STATUS_UNAVAILABLE, ADVERTISER_PAUSED, ACCOUNT_OUT_OF_BUDGET, ADVERTISER_PAYMENT_FAILURE, CAMPAIGN_PAUSED, CAMPAIGN_ARCHIVED, PENDING_START_DATE, ENDED, CAMPAIGN_OUT_OF_BUDGET ]',
+    creation_date     bigint                               null comment 'Epoch date the campaign was created.',
+    last_updated_date bigint                               null comment 'Epoch date of the last update to any property associated with the campaign in Amazon',
+    creator           varchar(20)                          null,
+    modifier          varchar(20)                          null,
+    deleted           tinyint(1) default 0                 null,
+    enabled           tinyint(1) default 1                 null,
+    gmt_create        datetime   default CURRENT_TIMESTAMP not null comment '创建时间',
+    gmt_modified      datetime   default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '修改时间',
+    constraint uk_ad_id
+        unique (ad_id)
+)
+    comment '推广品';
+
+create index idx_key1
+    on fenghuo_metadata.fenghuo_product_ad (ad_group_id, asin);
+
+create index idx_key2
+    on fenghuo_metadata.fenghuo_product_ad (profile_id, asin);
+
+create index idx_key3
+    on fenghuo_metadata.fenghuo_product_ad (campaign_id);

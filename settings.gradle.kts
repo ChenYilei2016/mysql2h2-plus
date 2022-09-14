@@ -1,0 +1,1 @@
+rootProject.name = "mysql2h2-plus"
