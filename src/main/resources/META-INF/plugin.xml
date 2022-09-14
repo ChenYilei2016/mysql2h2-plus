@@ -35,7 +35,7 @@
     <actions>
         <!-- Add your actions here -->
         <action id="org.exam.mysql2h2.MysqlToH2Action" class="com.chenyilei.mysql2h2plus.dlg.MysqlToH2Action"
-                text="Mysql To H2" description="MysqlToH2">
+                text="Mysql To H2 Plus" description="MysqlToH2">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
         </action>
     </actions>
