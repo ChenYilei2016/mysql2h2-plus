@@ -1,4 +1,6 @@
 .gradle
+
+!build/distributions/*.zip
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/

@@ -6,6 +6,7 @@ import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.util.JdbcConstants;
 import com.chenyilei.mysql2h2plus.utils.FileUtils;
 import com.chenyilei.mysql2h2plus.visit.ZbyMysqlToH2Visitor;
+import com.google.common.collect.Lists;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -17,7 +18,7 @@ import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
 public class MysqlToH2Utils {
-    private static Pattern createIndexPattern = Pattern.compile("create\\s+(UNIQUE\\s)?\\w+\\s+(\\w+)\\s+on\\s+\\w+", Pattern.CASE_INSENSITIVE);
+    private static Pattern createIndexPattern = Pattern.compile("CREATE\\s+(UNIQUE\\s)?\\w+\\s+(\\w+)\\s+ON\\s+\\w+");
 
     private static InputStream readFile(String filepath) throws IOException {
         InputStream input = new BufferedInputStream(new FileInputStream(filepath));
