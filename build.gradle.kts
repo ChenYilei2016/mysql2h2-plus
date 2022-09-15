@@ -61,3 +61,19 @@ tasks {
         token.set(System.getenv("PUBLISH_TOKEN"))
     }
 }
+
+
+sourceSets {
+    main {
+        java {
+            // 忽略所有的 src/main/java/test目录
+//            exclude 'test/**'
+        }
+        resources {
+            // 打包忽略目录: src/main/resources/img
+//            exclude 'img/**'
+            // 打包忽略文件: src/main/resources/icons/scanner.vsdx
+//            exclude 'icons/scanner.vsdx'
+        }
+    }
+}
