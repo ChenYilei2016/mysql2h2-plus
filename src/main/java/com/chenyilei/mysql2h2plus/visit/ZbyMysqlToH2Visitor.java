@@ -1,6 +1,7 @@
 package com.chenyilei.mysql2h2plus.visit;
 
 import com.alibaba.druid.sql.ast.SQLDataType;
+import com.alibaba.druid.sql.ast.SQLDataTypeImpl;
 import com.alibaba.druid.sql.ast.SQLExpr;
 import com.alibaba.druid.sql.ast.SQLObject;
 import com.alibaba.druid.sql.ast.expr.SQLBinaryExpr;
@@ -117,7 +118,12 @@ public class ZbyMysqlToH2Visitor extends MySqlOutputVisitor {
 
         while (iterator.hasNext()) {
             SQLTableElement sqlTableElement = iterator.next();
-
+            if (sqlTableElement instanceof SQLColumnDefinition) {
+                SQLColumnDefinition sqlColumnDefinition = (SQLColumnDefinition) sqlTableElement;
+                if ("json".equalsIgnoreCase(sqlColumnDefinition.getDataType().getName())) {
+                    sqlColumnDefinition.setDataType(new SQLDataTypeImpl("varchar", 6666));
+                }
+            }
             if (
                     sqlTableElement instanceof MysqlForeignKey
 //                            || sqlTableElement instanceof MySqlKey
@@ -191,6 +197,11 @@ public class ZbyMysqlToH2Visitor extends MySqlOutputVisitor {
     public boolean visit(SQLStartTransactionStatement x) {
         x.setAfterSemi(false);
         return false;
+    }
+
+    @Override
+    public boolean visit(SQLCreateViewStatement.Column x) {
+        return super.visit(x);
     }
 
 }

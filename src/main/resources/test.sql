@@ -13,7 +13,7 @@ CREATE TABLE `sync_metadata_job`
     `run_num`          int(11)       NOT NULL DEFAULT '0' COMMENT '运行次数',
     `version`          int(11)       NOT NULL DEFAULT '0' COMMENT '版本号',
     `progress`         varchar(32)            DEFAULT NULL,
-    `error_reason`     varchar(2048) NOT NULL DEFAULT '',
+    `error_reason`     json NOT NULL,
     `remark`           varchar(256)  NOT NULL DEFAULT '',
     `env`              varchar(32)   NOT NULL DEFAULT 'local' COMMENT '区分环境拉取',
     `endpoint_url`     varchar(64)   NOT NULL DEFAULT '' COMMENT '调用亚马逊API endpoint',
