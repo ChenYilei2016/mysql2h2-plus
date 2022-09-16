@@ -10,6 +10,7 @@
 3 兼容没有分号的情况  
 4 兼容h2索引名唯一性  
 5 去除create表后的属性  
-6 兼容json
+6 兼容json  
+
 ![image](https://user-images.githubusercontent.com/31011150/190112719-871a14fc-82fc-45fe-a21d-5a4e6a1f0365.png)
 
