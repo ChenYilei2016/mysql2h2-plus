@@ -4,10 +4,7 @@ import com.chenyilei.mysql2h2plus.utils.BaseUtils;
 import com.chenyilei.mysql2h2plus.utils.EditorUtils;
 import com.chenyilei.mysql2h2plus.utils.FileUtils;
 import com.intellij.icons.AllIcons;
-import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileChooser.FileChooser;
@@ -36,6 +33,8 @@ public class MysqlToH2Dlg extends JDialog {
     private static Editor mysqlEditor;
     private final JTextPane h2TxtPnl;
     private static JPanel mainPanel;
+    public static boolean createTableIfNotExists = true;
+    public static boolean dropTableIfExists = true;
 
     public MysqlToH2Dlg(Project project) {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -120,6 +119,30 @@ public class MysqlToH2Dlg extends JDialog {
                 }
             }
         });
+        actionGroup.addAction(new ToggleAction("table是否 drop table if exist", "table是否 drop table if exist", AllIcons.Actions.SetDefault) {
+            @Override
+            public boolean isSelected(@NotNull AnActionEvent e) {
+                return dropTableIfExists;
+            }
+
+            @Override
+            public void setSelected(@NotNull AnActionEvent e, boolean state) {
+                dropTableIfExists = state;
+            }
+        });
+
+        actionGroup.addAction(new ToggleAction("table是否create if not exist", "table是否create if not exist", AllIcons.Actions.SetDefault) {
+            @Override
+            public boolean isSelected(@NotNull AnActionEvent e) {
+                return createTableIfNotExists;
+            }
+
+            @Override
+            public void setSelected(@NotNull AnActionEvent e, boolean state) {
+                createTableIfNotExists = state;
+            }
+        });
+
         return actionGroup;
     }
 

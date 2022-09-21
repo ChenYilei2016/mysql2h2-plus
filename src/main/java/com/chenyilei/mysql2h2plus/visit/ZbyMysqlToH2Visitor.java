@@ -14,6 +14,7 @@ import com.alibaba.druid.sql.dialect.mysql.ast.MySqlUnique;
 import com.alibaba.druid.sql.dialect.mysql.ast.MysqlForeignKey;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.*;
 import com.alibaba.druid.sql.dialect.mysql.visitor.MySqlOutputVisitor;
+import com.chenyilei.mysql2h2plus.dlg.MysqlToH2Dlg;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -30,7 +31,6 @@ public class ZbyMysqlToH2Visitor extends MySqlOutputVisitor {
         super(appender);
     }
 
-
     private static String unquote(String name) {
         if (name.startsWith("`") && name.endsWith("`")) {
             name = name.substring(1, name.length() - 1);
@@ -40,6 +40,8 @@ public class ZbyMysqlToH2Visitor extends MySqlOutputVisitor {
     }
 
     public boolean visit(MySqlCreateTableStatement x) {
+        x.setIfNotExiists(MysqlToH2Dlg.createTableIfNotExists);
+//        this.addTable(x.getName().getSimpleName());
         Map<String, SQLObject> tableOptions = x.getTableOptions();
 
         Set<Map.Entry<String, SQLObject>> set = tableOptions.entrySet();
@@ -88,19 +90,19 @@ public class ZbyMysqlToH2Visitor extends MySqlOutputVisitor {
     }
 
     public boolean visit(MySqlUnique x) {
-        x.setName(unquote(x.getName().getSimpleName()) + atomicInteger.incrementAndGet());
+        x.setName(unquote(x.getName().getSimpleName()) + "_" + atomicInteger.incrementAndGet());
         x.setIndexType((String) null);
         return super.visit(x);
     }
 
     public boolean visit(MySqlTableIndex x) {
-        x.setName(new SQLIdentifierExpr(unquote(x.getName().getSimpleName()) + atomicInteger.incrementAndGet()));
+        x.setName(new SQLIdentifierExpr(unquote(x.getName().getSimpleName()) + "_" + atomicInteger.incrementAndGet()));
         x.setIndexType((String) null);
         return super.visit(x);
     }
 
     public boolean visit(MySqlKey x) {
-        x.setName(unquote(x.getName().getSimpleName()) + atomicInteger.incrementAndGet());
+        x.setName(unquote(x.getName().getSimpleName()) + "_" + atomicInteger.incrementAndGet());
         x.setIndexType((String) null);
         return super.visit(x);
     }

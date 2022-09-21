@@ -3,16 +3,17 @@ package com.chenyilei.mysql2h2plus.dlg;
 
 import com.alibaba.druid.sql.SQLUtils;
 import com.alibaba.druid.sql.ast.SQLStatement;
+import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlCreateTableStatement;
 import com.alibaba.druid.util.JdbcConstants;
 import com.chenyilei.mysql2h2plus.utils.FileUtils;
 import com.chenyilei.mysql2h2plus.visit.ZbyMysqlToH2Visitor;
-import com.google.common.collect.Lists;
 
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
@@ -33,6 +34,10 @@ public class MysqlToH2Utils {
         short magic = bb.getShort();
         return magic == (short) GZIPInputStream.GZIP_MAGIC ? new GZIPInputStream(pb) : pb;
     }
+    /**
+     * CREATE TABLE
+     * CREATE TABLE IF NOT EXISTS
+     */
 
     /**
      * 进行转换处
@@ -45,16 +50,20 @@ public class MysqlToH2Utils {
         StringBuilder sb = new StringBuilder();
         ZbyMysqlToH2Visitor visitor = new ZbyMysqlToH2Visitor(sb);
         for (SQLStatement statement : sqlStatements) {
-
+            //原先有表的话先删除
+            if (MysqlToH2Dlg.dropTableIfExists) {
+                if (statement instanceof MySqlCreateTableStatement) {
+                    String tableName = ((MySqlCreateTableStatement) statement).getTableSource().getName().getSimpleName();
+                    sb.append("DROP TABLE IF EXISTS ").append(tableName).append(" ;").append("\n");
+                }
+            }
             statement.accept(visitor);
             //防止无分号
             sb.append(";");
             sb.append("\n");
         }
         String h2Sql = sb.toString();
-
         h2Sql = createIndexUnique(h2Sql);
-
         return h2Sql;
     }
 

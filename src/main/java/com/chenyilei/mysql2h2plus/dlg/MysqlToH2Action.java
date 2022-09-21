@@ -5,6 +5,9 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * ICON : https://jetbrains.design/intellij/resources/icons_list/
+ */
 public class MysqlToH2Action extends AnAction {
 
     public static MysqlToH2Dlg dlg = null;
