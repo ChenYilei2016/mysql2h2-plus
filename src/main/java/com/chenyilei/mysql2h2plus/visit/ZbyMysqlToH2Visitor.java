@@ -89,7 +89,7 @@ public class ZbyMysqlToH2Visitor extends MySqlOutputVisitor {
 
     public boolean visit(MySqlUnique x) {
         x.setName(unquote(x.getName().getSimpleName()) + atomicInteger.incrementAndGet());
-//        x.setIndexType((String) null);
+        x.setIndexType((String) null);
         return super.visit(x);
     }
 

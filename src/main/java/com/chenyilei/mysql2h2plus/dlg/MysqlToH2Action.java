@@ -7,6 +7,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class MysqlToH2Action extends AnAction {
 
+    public static MysqlToH2Dlg dlg = null;
+
     @Override
     public void actionPerformed(@NotNull AnActionEvent event) {
         Project project = getEventProject(event);
@@ -14,6 +16,7 @@ public class MysqlToH2Action extends AnAction {
             return;
         }
 
-        new MysqlToH2Dlg(project).open();
+        dlg = new MysqlToH2Dlg(project);
+        dlg.open();
     }
 }

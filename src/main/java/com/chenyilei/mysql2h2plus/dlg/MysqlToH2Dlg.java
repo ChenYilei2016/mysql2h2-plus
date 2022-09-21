@@ -114,6 +114,7 @@ public class MysqlToH2Dlg extends JDialog {
                     h2TxtPnl.setText("");
                     mysqlEditor.getDocument().setText("");
                     mainPanel.updateUI();
+                    MysqlToH2Action.dlg.repaint();
                 } finally {
                     myDlg.setAlwaysOnTop(true);
                 }

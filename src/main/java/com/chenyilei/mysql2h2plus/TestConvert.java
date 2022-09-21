@@ -24,14 +24,23 @@ public class TestConvert {
 
         File file = org.apache.commons.io.FileUtils.getFile("/Users/yileichen/Desktop/ownCode/mysql2h2-plus/src/main/resources/test.sql");
         String s = FileUtils.copyToString(file, Charset.defaultCharset());
-
-
         String convert = MysqlToH2Utils.convert(s);
 
 
         System.err.println(convert);
     }
 
+    @Test
+    public void testBtree() {
+
+
+        File file = org.apache.commons.io.FileUtils.getFile("/Users/yileichen/Desktop/ownCode/mysql2h2-plus/src/main/resources/test_usingBtreeSql.sql");
+        String s = FileUtils.copyToString(file, Charset.defaultCharset());
+        String convert = MysqlToH2Utils.convert(s);
+
+
+        System.err.println(convert);
+    }
 
     @Test
     public void testC2() {
