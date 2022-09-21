@@ -21,5 +21,7 @@ public class MysqlToH2Action extends AnAction {
 
         dlg = new MysqlToH2Dlg(project);
         dlg.open();
+
+
     }
 }

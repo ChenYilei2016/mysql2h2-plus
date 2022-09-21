@@ -30,9 +30,9 @@ import java.nio.charset.StandardCharsets;
 
 public class MysqlToH2Dlg extends JDialog {
 
-    private static Editor mysqlEditor;
+    private Editor mysqlEditor;
     private final JTextPane h2TxtPnl;
-    private static JPanel mainPanel;
+    private JPanel mainPanel;
     public static boolean createTableIfNotExists = true;
     public static boolean dropTableIfExists = true;
 
