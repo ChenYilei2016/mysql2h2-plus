@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 public class MysqlToH2Dlg extends JDialog {
-
+    public static final String VERSION = "1.0.1";
     private Editor mysqlEditor;
     private final JTextPane h2TxtPnl;
     private JPanel mainPanel;
@@ -41,7 +41,7 @@ public class MysqlToH2Dlg extends JDialog {
         /*弹框最小宽1150,高680*/
         this.setPreferredSize(new Dimension(Math.max((int) (0.7 * screenSize.getWidth()), 1150),
                 Math.max((int) (0.7 * screenSize.getHeight()), 680)));
-        setTitle("mysql to h2 plus , 作者: chenyilei, 文本较大时候转换会卡 ");
+        setTitle("mysql to h2 plus " + VERSION + ", 作者: chenyilei, 文本较大时候转换会卡 ");
         mainPanel = new JPanel(new BorderLayout());
         setContentPane(mainPanel);
         setAlwaysOnTop(true);
