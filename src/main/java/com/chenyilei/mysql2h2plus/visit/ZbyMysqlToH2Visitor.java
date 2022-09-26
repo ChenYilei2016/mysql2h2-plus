@@ -1,9 +1,6 @@
 package com.chenyilei.mysql2h2plus.visit;
 
-import com.alibaba.druid.sql.ast.SQLDataType;
-import com.alibaba.druid.sql.ast.SQLDataTypeImpl;
-import com.alibaba.druid.sql.ast.SQLExpr;
-import com.alibaba.druid.sql.ast.SQLObject;
+import com.alibaba.druid.sql.ast.*;
 import com.alibaba.druid.sql.ast.expr.SQLBinaryExpr;
 import com.alibaba.druid.sql.ast.expr.SQLCharExpr;
 import com.alibaba.druid.sql.ast.expr.SQLIdentifierExpr;
@@ -14,6 +11,8 @@ import com.alibaba.druid.sql.dialect.mysql.ast.MySqlUnique;
 import com.alibaba.druid.sql.dialect.mysql.ast.MysqlForeignKey;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.*;
 import com.alibaba.druid.sql.dialect.mysql.visitor.MySqlOutputVisitor;
+import com.chenyilei.mysql2h2plus.context.DlgMetaContext;
+import com.chenyilei.mysql2h2plus.dlg.MysqlToH2Action;
 import com.chenyilei.mysql2h2plus.dlg.MysqlToH2Dlg;
 
 import java.util.*;
@@ -26,9 +25,11 @@ import java.util.stream.Collectors;
  */
 public class ZbyMysqlToH2Visitor extends MySqlOutputVisitor {
     public static final AtomicInteger atomicInteger = new AtomicInteger();
+    private boolean createTableIfNotExists = true;
 
     public ZbyMysqlToH2Visitor(Appendable appender) {
         super(appender);
+        createTableIfNotExists = DlgMetaContext.createTableIfNotExists;
     }
 
     private static String unquote(String name) {
@@ -40,7 +41,7 @@ public class ZbyMysqlToH2Visitor extends MySqlOutputVisitor {
     }
 
     public boolean visit(MySqlCreateTableStatement x) {
-        x.setIfNotExiists(MysqlToH2Dlg.createTableIfNotExists);
+        x.setIfNotExiists(createTableIfNotExists);
 //        this.addTable(x.getName().getSimpleName());
         Map<String, SQLObject> tableOptions = x.getTableOptions();
 
@@ -91,7 +92,18 @@ public class ZbyMysqlToH2Visitor extends MySqlOutputVisitor {
 
     public boolean visit(MySqlUnique x) {
         x.setName(unquote(x.getName().getSimpleName()) + "_" + atomicInteger.incrementAndGet());
-        x.setIndexType((String) null);
+        x.setIndexType((String) null); // bTree
+        return super.visit(x);
+    }
+
+    @Override
+    public boolean visit(SQLCreateIndexStatement x) {
+        x.setUsing(null);
+        SQLName name = x.getName();
+        if (name instanceof  SQLIdentifierExpr) {
+            SQLIdentifierExpr sqlIdentifierExpr = (SQLIdentifierExpr) name;
+            sqlIdentifierExpr.setName(unquote(x.getName().getSimpleName()) + "_" + atomicInteger.incrementAndGet());
+        }
         return super.visit(x);
     }
 
@@ -106,6 +118,8 @@ public class ZbyMysqlToH2Visitor extends MySqlOutputVisitor {
         x.setIndexType((String) null);
         return super.visit(x);
     }
+
+
 
     public boolean visit(MySqlLockTableStatement x) {
         return false;

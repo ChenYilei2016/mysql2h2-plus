@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -43,8 +44,22 @@ public class TestConvert {
         System.err.println(convert);
     }
 
+
     @Test
-    public void testC2() {
+    public void testCreateIndex() {
+
+
+        File file = org.apache.commons.io.FileUtils.getFile("/Users/yileichen/Desktop/ownCode/mysql2h2-plus/src/main/resources/test_createindex.sql");
+        String s = FileUtils.copyToString(file, Charset.defaultCharset());
+        String convert = MysqlToH2Utils.convert(s);
+
+
+        System.err.println(convert);
+    }
+
+
+    @Test
+    public void testPattern() {
         //不区分大小写
         //追加序列号
         Pattern pattern = Pattern.compile("create\\s+\\w+\\s+(\\w+)\\s+on\\s+\\w+", Pattern.CASE_INSENSITIVE);
@@ -62,5 +77,10 @@ public class TestConvert {
             String group = matcher.group(i);
             System.err.println(group);
         }
+    }
+
+    @Test
+    public void uri() throws Exception{
+        final URI uri = new URI("https://github.com/ChenYilei2016/mysql2h2-plus");
     }
 }

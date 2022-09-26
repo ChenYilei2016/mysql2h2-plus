@@ -1,5 +1,6 @@
 package com.chenyilei.mysql2h2plus.dlg;
 
+import com.chenyilei.mysql2h2plus.context.DlgMetaContext;
 import com.chenyilei.mysql2h2plus.utils.BaseUtils;
 import com.chenyilei.mysql2h2plus.utils.EditorUtils;
 import com.chenyilei.mysql2h2plus.utils.FileUtils;
@@ -19,29 +20,32 @@ import com.intellij.openapi.ui.Splitter;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileWrapper;
 import com.intellij.ui.IconManager;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.ScrollPaneFactory;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 
 public class MysqlToH2Dlg extends JDialog {
-    public static final String VERSION = "1.0.1";
+    public static final String VERSION = "1.0.2";
     private Editor mysqlEditor;
     private final JTextPane h2TxtPnl;
-    private JPanel mainPanel;
-    public static boolean createTableIfNotExists = true;
-    public static boolean dropTableIfExists = true;
+    private final JPanel mainPanel;
 
     public MysqlToH2Dlg(Project project) {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         /*弹框最小宽1150,高680*/
         this.setPreferredSize(new Dimension(Math.max((int) (0.7 * screenSize.getWidth()), 1150),
                 Math.max((int) (0.7 * screenSize.getHeight()), 680)));
-        setTitle("mysql to h2 plus " + VERSION + ", 作者: chenyilei, 文本较大时候转换会卡 ");
+        setTitle("MysqlToH2 plus " + VERSION + ", 作者: chenyilei");
         mainPanel = new JPanel(new BorderLayout());
         setContentPane(mainPanel);
         setAlwaysOnTop(true);
@@ -57,6 +61,26 @@ public class MysqlToH2Dlg extends JDialog {
                 topActionGroup(project), true).getComponent(), BorderLayout.NORTH);
         mainPanel.add(splitter, BorderLayout.CENTER);
 
+
+        try {
+//            Caused by: java.lang.NoSuchMethodError: 'void com.chenyilei.mysql2h2plus.dlg.MysqlToH2Dlg$1.<init>(com.chenyilei.mysql2h2plus.dlg.MysqlToH2Dlg, java.net.URI)'
+            final URI uri = new URI("https://github.com/ChenYilei2016/mysql2h2-plus");
+            JButton button = new JButton("https://github.com/ChenYilei2016/mysql2h2-plus");
+            button.setBorderPainted(false);
+            button.setOpaque(false);
+            button.setBackground(JBColor.WHITE);
+            button.setToolTipText(uri.toString());
+            button.setHorizontalAlignment(SwingConstants.LEFT);
+            button.addActionListener(event -> {
+                if (Desktop.isDesktopSupported()) {
+                    try {
+                        Desktop.getDesktop().browse(uri);
+                    } catch (IOException eio) { /* TODO: error handling */ }
+                } else { /* TODO: error handling */ }
+            });
+            mainPanel.add(button, BorderLayout.SOUTH);
+        } catch (Throwable ignore) {
+        }
     }
 
     private static @NotNull Icon load(@NotNull String path) {
@@ -81,12 +105,13 @@ public class MysqlToH2Dlg extends JDialog {
         actionGroup.addAction(new AnAction("Convert", "Convert", AllIcons.Actions.Redo) {
             @Override
             public void actionPerformed(@NotNull AnActionEvent e) {
+                if (BaseUtils.isEmpty(mysqlEditor.getDocument().getText())) {
+                    //提示内容为空
+                    h2TxtPnl.setText("ERROR: 源内容为空");
+                    return;
+//                    Messages.showWarningDialog("Error:" + e.getMessage(), "Warn");
+                }
                 convert(myDlg);
-            }
-
-            @Override
-            public void update(@NotNull AnActionEvent e) {
-                e.getPresentation().setEnabled(!BaseUtils.isEmpty(mysqlEditor.getDocument().getText()));
             }
         });
         actionGroup.addAction(new AnAction("Save", "Save", load("/icon/save.svg")) {
@@ -122,24 +147,24 @@ public class MysqlToH2Dlg extends JDialog {
         actionGroup.addAction(new ToggleAction("table是否 drop table if exist", "table是否 drop table if exist", AllIcons.Actions.SetDefault) {
             @Override
             public boolean isSelected(@NotNull AnActionEvent e) {
-                return dropTableIfExists;
+                return DlgMetaContext.dropTableIfExists;
             }
 
             @Override
             public void setSelected(@NotNull AnActionEvent e, boolean state) {
-                dropTableIfExists = state;
+                DlgMetaContext.dropTableIfExists = state;
             }
         });
 
-        actionGroup.addAction(new ToggleAction("table是否create if not exist", "table是否create if not exist", AllIcons.Actions.SetDefault) {
+        actionGroup.addAction(new ToggleAction("table是否 create if not exist", "table是否 create if not exist", AllIcons.Actions.SetDefault) {
             @Override
             public boolean isSelected(@NotNull AnActionEvent e) {
-                return createTableIfNotExists;
+                return DlgMetaContext.createTableIfNotExists;
             }
 
             @Override
             public void setSelected(@NotNull AnActionEvent e, boolean state) {
-                createTableIfNotExists = state;
+                DlgMetaContext.createTableIfNotExists = state;
             }
         });
 

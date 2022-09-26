@@ -5,6 +5,7 @@ import com.alibaba.druid.sql.SQLUtils;
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlCreateTableStatement;
 import com.alibaba.druid.util.JdbcConstants;
+import com.chenyilei.mysql2h2plus.context.DlgMetaContext;
 import com.chenyilei.mysql2h2plus.utils.FileUtils;
 import com.chenyilei.mysql2h2plus.visit.ZbyMysqlToH2Visitor;
 
@@ -51,7 +52,7 @@ public class MysqlToH2Utils {
         ZbyMysqlToH2Visitor visitor = new ZbyMysqlToH2Visitor(sb);
         for (SQLStatement statement : sqlStatements) {
             //原先有表的话先删除
-            if (MysqlToH2Dlg.dropTableIfExists) {
+            if (DlgMetaContext.dropTableIfExists) {
                 if (statement instanceof MySqlCreateTableStatement) {
                     String tableName = ((MySqlCreateTableStatement) statement).getTableSource().getName().getSimpleName();
                     sb.append("DROP TABLE IF EXISTS ").append(tableName).append(" ;").append("\n");
@@ -63,7 +64,7 @@ public class MysqlToH2Utils {
             sb.append("\n");
         }
         String h2Sql = sb.toString();
-        h2Sql = createIndexUnique(h2Sql);
+//        h2Sql = createIndexUnique(h2Sql);
         return h2Sql;
     }
 
