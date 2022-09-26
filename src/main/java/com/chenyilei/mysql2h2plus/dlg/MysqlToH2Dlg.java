@@ -22,6 +22,7 @@ import com.intellij.openapi.vfs.VirtualFileWrapper;
 import com.intellij.ui.IconManager;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.ScrollPaneFactory;
+import com.intellij.ui.ToggleActionButton;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -35,7 +36,7 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 
 public class MysqlToH2Dlg extends JDialog {
-    public static final String VERSION = "1.0.2";
+    public static final String VERSION = "1.0.3";
     private final Editor mysqlEditor;
     private final JTextPane h2TxtPnl;
     private final JPanel mainPanel;
@@ -165,6 +166,19 @@ public class MysqlToH2Dlg extends JDialog {
                 DlgMetaContext.createTableIfNotExists = state;
             }
         });
+
+        actionGroup.addAction(new ToggleActionButton("如果create index是在创建表外执行的, 是否融合到表内", AllIcons.Actions.SetDefault) {
+            @Override
+            public boolean isSelected(@NotNull AnActionEvent e) {
+                return DlgMetaContext.mergeOutCreateIndexIntoCreateTableSql;
+            }
+
+            @Override
+            public void setSelected(@NotNull AnActionEvent e, boolean state) {
+                DlgMetaContext.mergeOutCreateIndexIntoCreateTableSql = state;
+            }
+        });
+
 
         return actionGroup;
     }

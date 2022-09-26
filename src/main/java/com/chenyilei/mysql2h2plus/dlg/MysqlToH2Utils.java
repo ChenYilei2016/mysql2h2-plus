@@ -2,6 +2,7 @@ package com.chenyilei.mysql2h2plus.dlg;
 
 
 import com.alibaba.druid.sql.SQLUtils;
+import com.alibaba.druid.sql.ast.SQLName;
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.ast.expr.SQLIdentifierExpr;
 import com.alibaba.druid.sql.ast.statement.*;
@@ -58,12 +59,11 @@ public class MysqlToH2Utils {
 
         Map<String, MySqlCreateTableStatement> mySqlCreateTableStatementMap = new LinkedHashMap<>();
         List<SQLCreateIndexStatement> createIndexStatementList = new ArrayList<>();
-        List<SQLStatement> elseStatementList = new ArrayList<>();
         List<SQLStatement> removeStatementList = new LinkedList<>();
 
         for (SQLStatement statement : sqlStatements) {
             if (statement instanceof MySqlCreateTableStatement) {
-                mySqlCreateTableStatementMap.put(((MySqlCreateTableStatement) statement).getName().getSimpleName(), ((MySqlCreateTableStatement) statement));
+                mySqlCreateTableStatementMap.put(unquote(((MySqlCreateTableStatement) statement).getName()), ((MySqlCreateTableStatement) statement));
             } else if (statement instanceof SQLCreateIndexStatement) {
                 createIndexStatementList.add((SQLCreateIndexStatement) statement);
             } else if (statement instanceof SQLDropTableStatement) {
@@ -72,23 +72,21 @@ public class MysqlToH2Utils {
                     removeStatementList.add(statement);
                 }
             } else {
-                elseStatementList.add(statement);
             }
         }
 
         if (DlgMetaContext.mergeOutCreateIndexIntoCreateTableSql) {
             //存在的创建表
-            Iterator<SQLCreateIndexStatement> iterator = createIndexStatementList.iterator();
-            if (iterator.hasNext()) {
-                SQLCreateIndexStatement sqlCreateIndexStatement = iterator.next();
-                String indexName = sqlCreateIndexStatement.getName().getSimpleName();
+            for (SQLCreateIndexStatement sqlCreateIndexStatement : createIndexStatementList) {
+                String indexName = unquote(sqlCreateIndexStatement.getName());
                 String tableName = sqlCreateIndexStatement.getTableName();
                 List<SQLSelectOrderByItem> items = sqlCreateIndexStatement.getItems();
 
-                MySqlCreateTableStatement mySqlCreateTableStatement = mySqlCreateTableStatementMap.get(tableName);
+                MySqlCreateTableStatement mySqlCreateTableStatement = mySqlCreateTableStatementMap.get(unquote(tableName));
 
                 if (mySqlCreateTableStatement != null) {
                     removeStatementList.add(sqlCreateIndexStatement);
+
                     SQLTableElement sqlKey = null;
                     if ("UNIQUE".equals(sqlCreateIndexStatement.getType())) {
                         MySqlUnique mySqlUnique = new MySqlUnique();
@@ -105,7 +103,6 @@ public class MysqlToH2Utils {
                     }
                     mySqlCreateTableStatement.getTableElementList().add(sqlKey);
                 }
-
             }
         }
 
@@ -115,7 +112,7 @@ public class MysqlToH2Utils {
             //原先有表的话先删除
             if (DlgMetaContext.dropTableIfExists) {
                 if (statement instanceof MySqlCreateTableStatement) {
-                    String tableName = ((MySqlCreateTableStatement) statement).getTableSource().getName().getSimpleName();
+                    String tableName = unquote(((MySqlCreateTableStatement) statement).getTableSource().getName());
                     sb.append("DROP TABLE IF EXISTS ").append(tableName).append(" ;").append("\n");
                 }
             }
@@ -153,5 +150,21 @@ public class MysqlToH2Utils {
             String mysqlText = FileUtils.copyToString(fileIn, StandardCharsets.UTF_8);
             fileOut.write(convert(mysqlText).getBytes(StandardCharsets.UTF_8));
         }
+    }
+
+    public static String unquote(String name) {
+        if (name.startsWith("`") && name.endsWith("`")) {
+            name = name.substring(1, name.length() - 1);
+        }
+
+        return name;
+    }
+
+    public static String unquote(SQLName sqlName) {
+        String name = sqlName.getSimpleName();
+        if (name.startsWith("`") && name.endsWith("`")) {
+            name = name.substring(1, name.length() - 1);
+        }
+        return name;
     }
 }

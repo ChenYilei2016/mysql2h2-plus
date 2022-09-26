@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS `sync_metadata_job` ;
 
 DROP TABLE IF EXISTS `fenghuo_ad_group` ;
 
-create table if not exists sync_metadata_job
+create table if not exists `sync_metadata_job`
 (
     id               bigint                                  not null
         primary key,

@@ -26,3 +26,5 @@ create table if not exists sync_metadata_job
 create unique index idx_available_status_job_status_job_type
     on sync_metadata_job (available_status, job_status, job_type);
 
+create  index idx_available_status_job_status
+    on sync_metadata_job (available_status, job_status);

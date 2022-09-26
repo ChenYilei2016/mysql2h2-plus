@@ -19,6 +19,8 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import static com.chenyilei.mysql2h2plus.dlg.MysqlToH2Utils.unquote;
+
 /**
  * @author chenyilei
  * @date 2022/09/14 11:04
@@ -30,15 +32,6 @@ public class ZbyMysqlToH2Visitor extends MySqlOutputVisitor {
     public ZbyMysqlToH2Visitor(Appendable appender) {
         super(appender);
         createTableIfNotExists = DlgMetaContext.createTableIfNotExists;
-    }
-
-
-    private static String unquote(String name) {
-        if (name.startsWith("`") && name.endsWith("`")) {
-            name = name.substring(1, name.length() - 1);
-        }
-
-        return name;
     }
 
     public boolean visit(MySqlCreateTableStatement x) {
