@@ -57,6 +57,18 @@ public class TestConvert {
         System.err.println(convert);
     }
 
+    @Test
+    public void testDropTable() {
+
+
+        File file = org.apache.commons.io.FileUtils.getFile("/Users/yileichen/Desktop/ownCode/mysql2h2-plus/src/main/resources/test_droptable.sql");
+        String s = FileUtils.copyToString(file, Charset.defaultCharset());
+        String convert = MysqlToH2Utils.convert(s);
+
+
+        System.err.println(convert);
+    }
+
 
     @Test
     public void testPattern() {

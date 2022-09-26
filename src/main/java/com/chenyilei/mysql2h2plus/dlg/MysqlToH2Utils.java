@@ -4,9 +4,7 @@ package com.chenyilei.mysql2h2plus.dlg;
 import com.alibaba.druid.sql.SQLUtils;
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.ast.expr.SQLIdentifierExpr;
-import com.alibaba.druid.sql.ast.statement.SQLCreateIndexStatement;
-import com.alibaba.druid.sql.ast.statement.SQLSelectOrderByItem;
-import com.alibaba.druid.sql.ast.statement.SQLTableElement;
+import com.alibaba.druid.sql.ast.statement.*;
 import com.alibaba.druid.sql.dialect.mysql.ast.MySqlKey;
 import com.alibaba.druid.sql.dialect.mysql.ast.MySqlUnique;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlCreateTableStatement;
@@ -54,7 +52,6 @@ public class MysqlToH2Utils {
      */
     public static String convert(String mysqlTxt) {
         List<SQLStatement> sqlStatements = SQLUtils.parseStatements(mysqlTxt, JdbcConstants.MYSQL);
-        LinkedList<SQLStatement> orderedSqlStatements = new LinkedList<>();
 
         StringBuilder sb = new StringBuilder();
         ZbyMysqlToH2Visitor visitor = new ZbyMysqlToH2Visitor(sb);
@@ -62,12 +59,18 @@ public class MysqlToH2Utils {
         Map<String, MySqlCreateTableStatement> mySqlCreateTableStatementMap = new LinkedHashMap<>();
         List<SQLCreateIndexStatement> createIndexStatementList = new ArrayList<>();
         List<SQLStatement> elseStatementList = new ArrayList<>();
+        List<SQLStatement> removeStatementList = new LinkedList<>();
 
         for (SQLStatement statement : sqlStatements) {
             if (statement instanceof MySqlCreateTableStatement) {
                 mySqlCreateTableStatementMap.put(((MySqlCreateTableStatement) statement).getName().getSimpleName(), ((MySqlCreateTableStatement) statement));
             } else if (statement instanceof SQLCreateIndexStatement) {
                 createIndexStatementList.add((SQLCreateIndexStatement) statement);
+            } else if (statement instanceof SQLDropTableStatement) {
+                //去除原先的drop sql
+                if (DlgMetaContext.dropTableIfExists) {
+                    removeStatementList.add(statement);
+                }
             } else {
                 elseStatementList.add(statement);
             }
@@ -85,7 +88,7 @@ public class MysqlToH2Utils {
                 MySqlCreateTableStatement mySqlCreateTableStatement = mySqlCreateTableStatementMap.get(tableName);
 
                 if (mySqlCreateTableStatement != null) {
-                    iterator.remove();
+                    removeStatementList.add(sqlCreateIndexStatement);
                     SQLTableElement sqlKey = null;
                     if ("UNIQUE".equals(sqlCreateIndexStatement.getType())) {
                         MySqlUnique mySqlUnique = new MySqlUnique();
@@ -106,13 +109,9 @@ public class MysqlToH2Utils {
             }
         }
 
-        mySqlCreateTableStatementMap.forEach((s, mySqlCreateTableStatement) -> {
-            orderedSqlStatements.addLast(mySqlCreateTableStatement);
-        });
-        createIndexStatementList.forEach(orderedSqlStatements::addLast);
-        elseStatementList.forEach(orderedSqlStatements::addLast);
+        sqlStatements.removeAll(removeStatementList);
 
-        for (SQLStatement statement : orderedSqlStatements) {
+        for (SQLStatement statement : sqlStatements) {
             //原先有表的话先删除
             if (DlgMetaContext.dropTableIfExists) {
                 if (statement instanceof MySqlCreateTableStatement) {
