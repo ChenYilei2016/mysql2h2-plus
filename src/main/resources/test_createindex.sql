@@ -23,6 +23,6 @@ create table if not exists sync_metadata_job
 )
     comment '同步信息任务表' charset = utf8;
 
-create index idx_available_status_job_status_job_type
+create unique index idx_available_status_job_status_job_type
     on sync_metadata_job (available_status, job_status, job_type);
 

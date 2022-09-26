@@ -36,7 +36,7 @@ import java.nio.charset.StandardCharsets;
 
 public class MysqlToH2Dlg extends JDialog {
     public static final String VERSION = "1.0.2";
-    private Editor mysqlEditor;
+    private final Editor mysqlEditor;
     private final JTextPane h2TxtPnl;
     private final JPanel mainPanel;
 
@@ -50,9 +50,7 @@ public class MysqlToH2Dlg extends JDialog {
         setContentPane(mainPanel);
         setAlwaysOnTop(true);
 
-        if (mysqlEditor == null) {
-            mysqlEditor = EditorUtils.createEditor(project, PlainTextFileType.INSTANCE, "", true);
-        }
+        mysqlEditor = EditorUtils.createEditor(project, PlainTextFileType.INSTANCE, "", true);
         h2TxtPnl = new JTextPane();
         Splitter splitter = new Splitter(false, 0.5F);
         splitter.setFirstComponent(ScrollPaneFactory.createScrollPane(mysqlEditor.getComponent()));

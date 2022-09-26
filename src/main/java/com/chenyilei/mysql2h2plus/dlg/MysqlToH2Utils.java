@@ -3,7 +3,14 @@ package com.chenyilei.mysql2h2plus.dlg;
 
 import com.alibaba.druid.sql.SQLUtils;
 import com.alibaba.druid.sql.ast.SQLStatement;
+import com.alibaba.druid.sql.ast.expr.SQLIdentifierExpr;
+import com.alibaba.druid.sql.ast.statement.SQLCreateIndexStatement;
+import com.alibaba.druid.sql.ast.statement.SQLSelectOrderByItem;
+import com.alibaba.druid.sql.ast.statement.SQLTableElement;
+import com.alibaba.druid.sql.dialect.mysql.ast.MySqlKey;
+import com.alibaba.druid.sql.dialect.mysql.ast.MySqlUnique;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlCreateTableStatement;
+import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlTableIndex;
 import com.alibaba.druid.util.JdbcConstants;
 import com.chenyilei.mysql2h2plus.context.DlgMetaContext;
 import com.chenyilei.mysql2h2plus.utils.FileUtils;
@@ -13,8 +20,7 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
@@ -48,9 +54,65 @@ public class MysqlToH2Utils {
      */
     public static String convert(String mysqlTxt) {
         List<SQLStatement> sqlStatements = SQLUtils.parseStatements(mysqlTxt, JdbcConstants.MYSQL);
+        LinkedList<SQLStatement> orderedSqlStatements = new LinkedList<>();
+
         StringBuilder sb = new StringBuilder();
         ZbyMysqlToH2Visitor visitor = new ZbyMysqlToH2Visitor(sb);
+
+        Map<String, MySqlCreateTableStatement> mySqlCreateTableStatementMap = new LinkedHashMap<>();
+        List<SQLCreateIndexStatement> createIndexStatementList = new ArrayList<>();
+        List<SQLStatement> elseStatementList = new ArrayList<>();
+
         for (SQLStatement statement : sqlStatements) {
+            if (statement instanceof MySqlCreateTableStatement) {
+                mySqlCreateTableStatementMap.put(((MySqlCreateTableStatement) statement).getName().getSimpleName(), ((MySqlCreateTableStatement) statement));
+            } else if (statement instanceof SQLCreateIndexStatement) {
+                createIndexStatementList.add((SQLCreateIndexStatement) statement);
+            } else {
+                elseStatementList.add(statement);
+            }
+        }
+
+        if (DlgMetaContext.mergeOutCreateIndexIntoCreateTableSql) {
+            //存在的创建表
+            Iterator<SQLCreateIndexStatement> iterator = createIndexStatementList.iterator();
+            if (iterator.hasNext()) {
+                SQLCreateIndexStatement sqlCreateIndexStatement = iterator.next();
+                String indexName = sqlCreateIndexStatement.getName().getSimpleName();
+                String tableName = sqlCreateIndexStatement.getTableName();
+                List<SQLSelectOrderByItem> items = sqlCreateIndexStatement.getItems();
+
+                MySqlCreateTableStatement mySqlCreateTableStatement = mySqlCreateTableStatementMap.get(tableName);
+
+                if (mySqlCreateTableStatement != null) {
+                    iterator.remove();
+                    SQLTableElement sqlKey = null;
+                    if ("UNIQUE".equals(sqlCreateIndexStatement.getType())) {
+                        MySqlUnique mySqlUnique = new MySqlUnique();
+                        mySqlUnique.setParent(sqlCreateIndexStatement.getParent());
+                        mySqlUnique.setName(new SQLIdentifierExpr(indexName));
+                        items.forEach(mySqlUnique::addColumn);
+                        sqlKey = mySqlUnique;
+                    } else {
+                        MySqlTableIndex mySqlTableIndex = new MySqlTableIndex();
+                        mySqlTableIndex.setParent(sqlCreateIndexStatement.getParent());
+                        mySqlTableIndex.setName(new SQLIdentifierExpr(indexName));
+                        items.forEach(mySqlTableIndex::addColumn);
+                        sqlKey = mySqlTableIndex;
+                    }
+                    mySqlCreateTableStatement.getTableElementList().add(sqlKey);
+                }
+
+            }
+        }
+
+        mySqlCreateTableStatementMap.forEach((s, mySqlCreateTableStatement) -> {
+            orderedSqlStatements.addLast(mySqlCreateTableStatement);
+        });
+        createIndexStatementList.forEach(orderedSqlStatements::addLast);
+        elseStatementList.forEach(orderedSqlStatements::addLast);
+
+        for (SQLStatement statement : orderedSqlStatements) {
             //原先有表的话先删除
             if (DlgMetaContext.dropTableIfExists) {
                 if (statement instanceof MySqlCreateTableStatement) {

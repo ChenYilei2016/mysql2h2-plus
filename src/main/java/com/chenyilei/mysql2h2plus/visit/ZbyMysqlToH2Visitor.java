@@ -26,10 +26,18 @@ import java.util.stream.Collectors;
 public class ZbyMysqlToH2Visitor extends MySqlOutputVisitor {
     public static final AtomicInteger atomicInteger = new AtomicInteger();
     private boolean createTableIfNotExists = true;
+    private boolean dropTableIfExists = true;
 
     public ZbyMysqlToH2Visitor(Appendable appender) {
         super(appender);
         createTableIfNotExists = DlgMetaContext.createTableIfNotExists;
+        dropTableIfExists = DlgMetaContext.dropTableIfExists;
+    }
+
+    @Override
+    public boolean visit(SQLDropTableStatement x) {
+        //TODO: 如果是生成drop table , 则这里全失效, create的时候再重创建
+        return super.visit(x);
     }
 
     private static String unquote(String name) {
