@@ -12,11 +12,11 @@
 
     <description><![CDATA[
 <em>Description</em>: A tool for converting mysql script to h2 script.<br>
-一个让表结构 mysql 变 h2的插件
+一个让表结构 mysql 变 h2的插件<br>
 
-Instructions: Tools-->MysqlToH2
-1. Open the file for conversion. File larger than 1M can be converted and saved directly (no preview) Scenario: For example, the mysql script exported from Navicat.
-2. Copy content from content to text box for conversion Scenario: For example from the flagship database plug-in "Generate DDL to Clipboard
+Instructions: Tools-->MysqlToH2<br>
+1. Open the file for conversion. File larger than 1M can be converted and saved directly (no preview) Scenario: For example, the mysql script exported from Navicat.<br>
+2. Copy content from content to text box for conversion Scenario: For example from the flagship database plug-in "Generate DDL to Clipboard<br>
     ]]></description>
 
     <!-- 上传插件时必需 -->

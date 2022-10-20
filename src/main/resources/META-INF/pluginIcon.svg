@@ -1,12 +1,12 @@
-<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M32.0845 7.94025V4H24.0203V7.9896H16.029V4H7.91553V7.94025H4V36H16.0044V32.0045C16.0058 30.9457 16.4274 29.9308 17.1766 29.1826C17.9258 28.4345 18.9412 28.0143 20 28.0143C21.0588 28.0143 22.0743 28.4345 22.8234 29.1826C23.5726 29.9308 23.9942 30.9457 23.9956 32.0045V36H36V7.94025H32.0845Z"
-          fill="url(#paint0_linear)"/>
-    <defs>
-        <linearGradient id="paint0_linear" x1="2.94192" y1="4.89955" x2="37.7772" y2="39.7345"
-                        gradientUnits="userSpaceOnUse">
-            <stop offset="0.15937" stop-color="#3BEA62"/>
-            <stop offset="0.5404" stop-color="#3C99CC"/>
-            <stop offset="0.93739" stop-color="#6B57FF"/>
-        </linearGradient>
-    </defs>
+<svg width="40" height="40" xmlns="http://www.w3.org/2000/svg">
+ <g>
+  <title>Layer 1</title>
+  <text style="cursor: move;" font-style="normal" stroke="#000" xml:space="preserve" text-anchor="start" font-family="Noto Sans JP" font-size="13" id="svg_4" y="15" x="3" stroke-width="0" fill="#000000">mysql</text>
+  <text style="cursor: move;" xml:space="preserve" text-anchor="start" font-family="Noto Sans JP" font-size="12" id="svg_5" y="33" x="13.0625" stroke-width="0" stroke="#000" fill="#000000">h2</text>
+  <text fill="#000000" stroke="#000" stroke-width="0" x="149" y="-27" id="svg_1" font-size="24" font-family="Noto Sans JP" text-anchor="start" xml:space="preserve"/>
+  <path id="svg_3" d="m103,252c0,0 20,6 20,6c0,0 18,10 18,10" opacity="NaN" stroke-width="0" stroke="#000" fill="#000000"/>
+  <path id="svg_6" d="m33,30" opacity="NaN" stroke-width="0" stroke="#000" fill="#000000"/>
+  <path id="svg_8" d="m31,28" opacity="NaN" stroke-width="0" stroke="#000" fill="#000000"/>
+ </g>
+
 </svg>
