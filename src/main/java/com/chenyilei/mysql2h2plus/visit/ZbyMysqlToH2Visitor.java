@@ -131,7 +131,8 @@ public class ZbyMysqlToH2Visitor extends MySqlOutputVisitor {
             if (sqlTableElement instanceof SQLColumnDefinition) {
                 SQLColumnDefinition sqlColumnDefinition = (SQLColumnDefinition) sqlTableElement;
                 if ("json".equalsIgnoreCase(sqlColumnDefinition.getDataType().getName())) {
-                    sqlColumnDefinition.setDataType(new SQLDataTypeImpl("varchar", 6666));
+//                    sqlColumnDefinition.setDataType(new SQLDataTypeImpl("varchar", 6666));
+                    sqlColumnDefinition.setDataType(new SQLDataTypeImpl("text"));
                 }
             }
             if (

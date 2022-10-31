@@ -10,7 +10,7 @@
 3 兼容没有分号的情况  
 4 兼容h2索引名唯一性  
 5 去除create表后的属性  
-6 兼容json  
+6 json字段转text  
 7 支持 create if not exist , drop if exist选项  
 8 支持create索引融合进create表sql中
 
