@@ -13,10 +13,30 @@
     <description><![CDATA[
 <em>Description</em>: A tool for converting mysql script to h2 script.<br>
 一个让表结构 mysql 变 h2的插件<br>
+1 mysql 转换 h2表结构  <br>
+2 兼容索引外部create Index方式  <br>
+3 兼容索引表中携带方式  <br>
+3 兼容没有分号的情况  <br>
+4 兼容h2索引名唯一性  <br>
+5 去除create表后的属性  <br>
+6 json字段转text  <br>
+7 支持 create if not exist , drop if exist选项 <br>
+8 支持create索引融合进create表sql中  <br>
+9 支持适配mysql的虚拟列  <br>
 
 Instructions: Tools-->MysqlToH2<br>
 1. Open the file for conversion. File larger than 1M can be converted and saved directly (no preview) Scenario: For example, the mysql script exported from Navicat.<br>
 2. Copy content from content to text box for conversion Scenario: For example from the flagship database plug-in "Generate DDL to Clipboard<br>
+1 mysql convert h2 table structure<br>
+2 The external create Index mode is compatible with the index<br>
+3 Compatible index table carry mode<br>
+3 Compatible without semicolons<br>
+4 Compatible with h2 index name uniqueness<br>
+5 Remove the attributes after the create table<br>
+6 Convert the json field to text<br>
+7 The create if not exist and drop if exist options are supported<br>
+8 create indexes can be merged into create table sql<br>
+9 Support virtual columns for mysql<br>
     ]]></description>
 
     <!-- 上传插件时必需 -->

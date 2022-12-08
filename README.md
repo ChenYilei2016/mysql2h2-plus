@@ -12,8 +12,8 @@
 5 去除create表后的属性  
 6 json字段转text  
 7 支持 create if not exist , drop if exist选项  
-8 支持create索引融合进create表sql中
-9 支持适配mysql的虚拟列
+8 支持create索引融合进create表sql中  
+9 支持适配mysql的虚拟列  
 
 ![image](https://user-images.githubusercontent.com/31011150/190112719-871a14fc-82fc-45fe-a21d-5a4e6a1f0365.png)
 ![img.png](img.png)

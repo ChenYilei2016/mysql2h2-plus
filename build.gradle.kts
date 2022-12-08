@@ -39,27 +39,6 @@ intellij {
     updateSinceUntilBuild.set(false)
 }
 
-
-//patchPluginXml {
-//    //如果有自定义patchPluginXml.sinceBuild和patchPluginXml.untilBuild就为用户自定义，否则为默认值
-//    changeNotes
-//    """
-//    <em>0.0.3</em><br>
-//      <em>1.Update UI</em><br>
-//      <em>2.Required 193.5233.102+<em><br>
-//      <em>3.Add plugin icon</em><br>
-//    <br>
-//    <em>0.0.2</em><br>
-//      1.Enhanced conversion. Switch from bgranvea/mysql2h2-converter to alibaba/druid for SQL analysis<br>
-//      2.Enhanced error prompt<br>
-//    <br>
-//    <em>0.0.1</em><br>
-//      convert mysql script to h2 script.<br>
-//      1.Open the file for conversion. Directly convert and save if the file larger than 1M (without preview)<br>
-//      2.Copy content from clipboard to text box for conversion<br>
-//      """
-//}
-
 tasks {
     // Set the JVM compatibility versions
     withType<JavaCompile> {
