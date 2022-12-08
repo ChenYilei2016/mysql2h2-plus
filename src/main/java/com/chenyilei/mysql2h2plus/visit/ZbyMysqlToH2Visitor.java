@@ -134,6 +134,11 @@ public class ZbyMysqlToH2Visitor extends MySqlOutputVisitor {
 //                    sqlColumnDefinition.setDataType(new SQLDataTypeImpl("varchar", 6666));
                     sqlColumnDefinition.setDataType(new SQLDataTypeImpl("text"));
                 }
+                /**
+                 * h2本身支持虚拟列, 但是不能用 virtual字段
+                 */
+//                sqlColumnDefinition.setGeneratedAlawsAs(null);
+                sqlColumnDefinition.setVirtual(false);
             }
             if (
                     sqlTableElement instanceof MysqlForeignKey

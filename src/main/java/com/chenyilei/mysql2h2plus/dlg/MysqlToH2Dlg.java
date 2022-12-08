@@ -27,16 +27,13 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 
 public class MysqlToH2Dlg extends JDialog {
-    public static final String VERSION = "1.0.4";
+    public static final String VERSION = "1.0.5";
     private final Editor mysqlEditor;
     private final JTextPane h2TxtPnl;
     private final JPanel mainPanel;

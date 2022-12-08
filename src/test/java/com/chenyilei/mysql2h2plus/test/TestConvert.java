@@ -1,4 +1,4 @@
-package com.chenyilei.mysql2h2plus;
+package com.chenyilei.mysql2h2plus.test;
 
 import com.chenyilei.mysql2h2plus.dlg.MysqlToH2Utils;
 import com.chenyilei.mysql2h2plus.utils.FileUtils;
@@ -23,7 +23,7 @@ public class TestConvert {
     public void testC() {
 
 
-        File file = org.apache.commons.io.FileUtils.getFile("/Users/yileichen/Desktop/ownCode/mysql2h2-plus/src/main/resources/test.sql");
+        File file = org.apache.commons.io.FileUtils.getFile("src/test/resources/test.sql");
         String s = FileUtils.copyToString(file, Charset.defaultCharset());
         String convert = MysqlToH2Utils.convert(s);
 
@@ -36,7 +36,7 @@ public class TestConvert {
     public void testBtree() {
 
 
-        File file = org.apache.commons.io.FileUtils.getFile("/Users/yileichen/Desktop/ownCode/mysql2h2-plus/src/main/resources/test_usingBtreeSql.sql");
+        File file = org.apache.commons.io.FileUtils.getFile("src/test/resources/test_usingBtreeSql.sql");
         String s = FileUtils.copyToString(file, Charset.defaultCharset());
         String convert = MysqlToH2Utils.convert(s);
 
@@ -49,7 +49,7 @@ public class TestConvert {
     public void testCreateIndex() {
 
 
-        File file = org.apache.commons.io.FileUtils.getFile("/Users/yileichen/Desktop/ownCode/mysql2h2-plus/src/main/resources/test_createindex.sql");
+        File file = org.apache.commons.io.FileUtils.getFile("src/test/resources/test_createindex.sql");
         String s = FileUtils.copyToString(file, Charset.defaultCharset());
         String convert = MysqlToH2Utils.convert(s);
 
@@ -61,7 +61,7 @@ public class TestConvert {
     public void testDropTable() {
 
 
-        File file = org.apache.commons.io.FileUtils.getFile("/Users/yileichen/Desktop/ownCode/mysql2h2-plus/src/main/resources/test_droptable.sql");
+        File file = org.apache.commons.io.FileUtils.getFile("src/test/resources/test_droptable.sql");
         String s = FileUtils.copyToString(file, Charset.defaultCharset());
         String convert = MysqlToH2Utils.convert(s);
 
@@ -69,6 +69,13 @@ public class TestConvert {
         System.err.println(convert);
     }
 
+    @Test
+    public void testVirtual(){
+        File file = org.apache.commons.io.FileUtils.getFile("src/test/resources/test_virtual.sql");
+        String s = FileUtils.copyToString(file, Charset.defaultCharset());
+        String convert = MysqlToH2Utils.convert(s);
+        System.err.println(convert);
+    }
 
     @Test
     public void testPattern() {
@@ -77,7 +84,7 @@ public class TestConvert {
         Pattern pattern = Pattern.compile("create\\s+\\w+\\s+(\\w+)\\s+on\\s+\\w+", Pattern.CASE_INSENSITIVE);
 
 
-        File file = org.apache.commons.io.FileUtils.getFile("/Users/yileichen/Desktop/ownCode/mysql2h2-plus/src/main/resources/test.sql");
+        File file = org.apache.commons.io.FileUtils.getFile("src/test/resources/test.sql");
         String s = FileUtils.copyToString(file, Charset.defaultCharset());
         String convert = MysqlToH2Utils.convert(s);
         Matcher matcher = pattern.matcher(convert);
