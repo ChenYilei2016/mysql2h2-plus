@@ -2,13 +2,17 @@ package com.chenyilei.mysql2h2plus.utils;
 
 import com.intellij.util.ReflectionUtil;
 
+import java.io.*;
 import java.lang.reflect.Field;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.GZIPInputStream;
 
-public class BaseUtils {
+public class MyBaseUtils {
     public static boolean isEmpty(Collection<?> collection) {
         return (collection == null || collection.isEmpty());
     }
@@ -106,7 +110,7 @@ public class BaseUtils {
      * @return 结果
      */
     public static String getJavaName(String name) {
-        if (BaseUtils.isEmpty(name)) {
+        if (MyBaseUtils.isEmpty(name)) {
             return name;
         }
         // 强转全小写
@@ -138,7 +142,7 @@ public class BaseUtils {
      */
     public static String append(Object... objects) {
 
-        if (BaseUtils.isEmpty(objects)) {
+        if (MyBaseUtils.isEmpty(objects)) {
             return null;
         }
         StringBuilder builder = new StringBuilder();
@@ -266,4 +270,17 @@ public class BaseUtils {
         return username;
     }
 
+    public static InputStream readFile(String filepath) throws IOException {
+        InputStream input = new BufferedInputStream(new FileInputStream(filepath));
+        PushbackInputStream pb = new PushbackInputStream(input, 2);
+        byte[] magicBytes = new byte[2];
+        if (pb.read(magicBytes) != 2) {
+            throw new RuntimeException("读取文件出错[" + filepath + "]");
+        }
+        pb.unread(magicBytes);
+        ByteBuffer bb = ByteBuffer.wrap(magicBytes);
+        bb.order(ByteOrder.LITTLE_ENDIAN);
+        short magic = bb.getShort();
+        return magic == (short) GZIPInputStream.GZIP_MAGIC ? new GZIPInputStream(pb) : pb;
+    }
 }

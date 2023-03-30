@@ -1,7 +1,8 @@
 # mysql2h2-plus
 借鉴已开源的技术，不断完善转换的IDEA 插件
 
-可以打包后直接拖入IDEA并使用 / 或直接下载 https://github.com/ChenYilei2016/mysql2h2-plus/blob/master/build/distributions
+IDEA插件市场搜索即可安装  
+也可以打包后直接拖入IDEA并使用 / 或直接下载 https://github.com/ChenYilei2016/mysql2h2-plus/blob/master/build/distributions
 
 功能:  
 1 mysql 转换 h2表结构  

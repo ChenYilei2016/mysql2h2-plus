@@ -1,12 +1,10 @@
 package com.chenyilei.mysql2h2plus.test;
 
-import com.chenyilei.mysql2h2plus.dlg.MysqlToH2Utils;
+import com.chenyilei.mysql2h2plus.visit.MysqlToH2Helper;
 import com.chenyilei.mysql2h2plus.utils.FileUtils;
-import com.intellij.patterns.StringPatternUtil;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.regex.Matcher;
@@ -25,7 +23,7 @@ public class TestConvert {
 
         File file = org.apache.commons.io.FileUtils.getFile("src/test/resources/test.sql");
         String s = FileUtils.copyToString(file, Charset.defaultCharset());
-        String convert = MysqlToH2Utils.convert(s);
+        String convert = MysqlToH2Helper.convert(s);
 
 
         System.err.println(convert);
@@ -38,7 +36,7 @@ public class TestConvert {
 
         File file = org.apache.commons.io.FileUtils.getFile("src/test/resources/test_usingBtreeSql.sql");
         String s = FileUtils.copyToString(file, Charset.defaultCharset());
-        String convert = MysqlToH2Utils.convert(s);
+        String convert = MysqlToH2Helper.convert(s);
 
 
         System.err.println(convert);
@@ -51,7 +49,7 @@ public class TestConvert {
 
         File file = org.apache.commons.io.FileUtils.getFile("src/test/resources/test_createindex.sql");
         String s = FileUtils.copyToString(file, Charset.defaultCharset());
-        String convert = MysqlToH2Utils.convert(s);
+        String convert = MysqlToH2Helper.convert(s);
 
 
         System.err.println(convert);
@@ -63,7 +61,7 @@ public class TestConvert {
 
         File file = org.apache.commons.io.FileUtils.getFile("src/test/resources/test_droptable.sql");
         String s = FileUtils.copyToString(file, Charset.defaultCharset());
-        String convert = MysqlToH2Utils.convert(s);
+        String convert = MysqlToH2Helper.convert(s);
 
 
         System.err.println(convert);
@@ -73,7 +71,7 @@ public class TestConvert {
     public void testVirtual(){
         File file = org.apache.commons.io.FileUtils.getFile("src/test/resources/test_virtual.sql");
         String s = FileUtils.copyToString(file, Charset.defaultCharset());
-        String convert = MysqlToH2Utils.convert(s);
+        String convert = MysqlToH2Helper.convert(s);
         System.err.println(convert);
     }
 
@@ -86,7 +84,7 @@ public class TestConvert {
 
         File file = org.apache.commons.io.FileUtils.getFile("src/test/resources/test.sql");
         String s = FileUtils.copyToString(file, Charset.defaultCharset());
-        String convert = MysqlToH2Utils.convert(s);
+        String convert = MysqlToH2Helper.convert(s);
         Matcher matcher = pattern.matcher(convert);
 
 

@@ -1,6 +1,7 @@
 package com.chenyilei.mysql2h2plus.context;
 
 /**
+ * 目前全局static, 不区分project
  * @author chenyilei
  * @date 2022/09/26 11:09
  */

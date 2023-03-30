@@ -39,6 +39,22 @@ Instructions: Tools-->MysqlToH2<br>
 9 Support virtual columns for mysql<br>
     ]]></description>
 
+    <change-notes><![CDATA[
+      <p>1.0.6</p>
+      <ul>
+        <li>1.Code optimization</li>
+        <li>2.Fix errors related to ui</li>
+        <li>3.Compatible with IDEA 2023.1 +</li>
+      </ul>
+      <ul>
+        <li>1.代码优化</li>
+        <li>2.修复ui相关的报错</li>
+        <li>3.兼容IDEA 2023.1+ </li>
+      </ul>
+
+        ]]>
+    </change-notes>
+
     <!-- 上传插件时必需 -->
     <idea-version since-build="193.5233.102"/>
 
@@ -58,7 +74,8 @@ Instructions: Tools-->MysqlToH2<br>
 
     <actions>
         <!-- Add your actions here -->
-        <action id="org.exam.mysql2h2.MysqlToH2Action" class="com.chenyilei.mysql2h2plus.dlg.MysqlToH2Action"
+        <action id="org.exam.mysql2h2.MysqlToH2Action"
+                class="com.chenyilei.mysql2h2plus.bootstrap.MysqlToH2BootstrapAction"
                 text="Mysql To H2 Plus" description="MysqlToH2">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
         </action>

@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "com.chenyilei"
-version = "1.0.5"
+version = "1.0.6"
 
 repositories {
     mavenLocal()
@@ -48,7 +48,6 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set("213")
-        untilBuild.set("223.*")
     }
 
     signPlugin {

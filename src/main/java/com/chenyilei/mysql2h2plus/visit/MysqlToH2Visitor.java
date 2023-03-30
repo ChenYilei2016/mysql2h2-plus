@@ -12,24 +12,21 @@ import com.alibaba.druid.sql.dialect.mysql.ast.MysqlForeignKey;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.*;
 import com.alibaba.druid.sql.dialect.mysql.visitor.MySqlOutputVisitor;
 import com.chenyilei.mysql2h2plus.context.DlgMetaContext;
-import com.chenyilei.mysql2h2plus.dlg.MysqlToH2Action;
-import com.chenyilei.mysql2h2plus.dlg.MysqlToH2Dlg;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
-import static com.chenyilei.mysql2h2plus.dlg.MysqlToH2Utils.unquote;
+import static com.chenyilei.mysql2h2plus.visit.MysqlToH2Helper.unquote;
 
 /**
  * @author chenyilei
  * @date 2022/09/14 11:04
  */
-public class ZbyMysqlToH2Visitor extends MySqlOutputVisitor {
+public class MysqlToH2Visitor extends MySqlOutputVisitor {
     public static final AtomicInteger atomicInteger = new AtomicInteger();
     private boolean createTableIfNotExists = true;
 
-    public ZbyMysqlToH2Visitor(Appendable appender) {
+    public MysqlToH2Visitor(Appendable appender) {
         super(appender);
         createTableIfNotExists = DlgMetaContext.createTableIfNotExists;
     }

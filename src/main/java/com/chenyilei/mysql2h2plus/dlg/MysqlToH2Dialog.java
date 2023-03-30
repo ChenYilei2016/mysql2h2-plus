@@ -1,17 +1,25 @@
 package com.chenyilei.mysql2h2plus.dlg;
 
+import com.chenyilei.mysql2h2plus.constant.VERSION;
 import com.chenyilei.mysql2h2plus.context.DlgMetaContext;
-import com.chenyilei.mysql2h2plus.utils.BaseUtils;
-import com.chenyilei.mysql2h2plus.utils.EditorUtils;
+import com.chenyilei.mysql2h2plus.utils.MyBaseUtils;
 import com.chenyilei.mysql2h2plus.utils.FileUtils;
+import com.chenyilei.mysql2h2plus.visit.MysqlToH2Helper;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.EditorFactory;
+import com.intellij.openapi.editor.EditorSettings;
+import com.intellij.openapi.editor.ex.EditorEx;
+import com.intellij.openapi.editor.highlighter.EditorHighlighterFactory;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.fileChooser.FileChooserFactory;
 import com.intellij.openapi.fileChooser.FileSaverDescriptor;
+import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.PlainTextFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
@@ -32,31 +40,28 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 
-public class MysqlToH2Dlg extends JDialog {
-    public static final String VERSION = "1.0.5";
+public class MysqlToH2Dialog extends JDialog {
     private final Editor mysqlEditor;
     private final JTextPane h2TxtPnl;
     private final JPanel mainPanel;
 
-    public MysqlToH2Dlg(Project project) {
+    public MysqlToH2Dialog(Project project) {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         /*弹框最小宽1150,高680*/
-        this.setPreferredSize(new Dimension(Math.max((int) (0.7 * screenSize.getWidth()), 1150),
-                Math.max((int) (0.7 * screenSize.getHeight()), 680)));
-        setTitle("MysqlToH2 plus " + VERSION + ", 作者: chenyilei");
+        this.setPreferredSize(new Dimension(Math.max((int) (0.7 * screenSize.getWidth()), 1150), Math.max((int) (0.7 * screenSize.getHeight()), 680)));
+        setTitle("MysqlToH2 plus " + VERSION.VERSION + "   author : chenyilei");
         mainPanel = new JPanel(new BorderLayout());
         setContentPane(mainPanel);
         setAlwaysOnTop(true);
+        setModal(true);
 
-        mysqlEditor = EditorUtils.createEditor(project, PlainTextFileType.INSTANCE, "", true);
+        mysqlEditor = createEditor(project, PlainTextFileType.INSTANCE, "", true);
         h2TxtPnl = new JTextPane();
         Splitter splitter = new Splitter(false, 0.5F);
         splitter.setFirstComponent(ScrollPaneFactory.createScrollPane(mysqlEditor.getComponent()));
         splitter.setSecondComponent(ScrollPaneFactory.createScrollPane(h2TxtPnl));
-        mainPanel.add(ActionManager.getInstance().createActionToolbar("Tool bar",
-                topActionGroup(project), true).getComponent(), BorderLayout.NORTH);
+        mainPanel.add(ActionManager.getInstance().createActionToolbar("Tool bar", topActionGroup(project), true).getComponent(), BorderLayout.NORTH);
         mainPanel.add(splitter, BorderLayout.CENTER);
-
 
         try {
 //            Caused by: java.lang.NoSuchMethodError: 'void com.chenyilei.mysql2h2plus.dlg.MysqlToH2Dlg$1.<init>(com.chenyilei.mysql2h2plus.dlg.MysqlToH2Dlg, java.net.URI)'
@@ -71,16 +76,17 @@ public class MysqlToH2Dlg extends JDialog {
                 if (Desktop.isDesktopSupported()) {
                     try {
                         Desktop.getDesktop().browse(uri);
-                    } catch (IOException eio) { /* TODO: error handling */ }
-                } else { /* TODO: error handling */ }
+                    } catch (IOException ignore) {  }
+                } else { }
             });
             mainPanel.add(button, BorderLayout.SOUTH);
         } catch (Throwable ignore) {
         }
+
     }
 
     private static @NotNull Icon load(@NotNull String path) {
-        return IconManager.getInstance().getIcon(path, MysqlToH2Dlg.class);
+        return IconManager.getInstance().getIcon(path, MysqlToH2Dialog.class);
     }
 
     private DefaultActionGroup topActionGroup(Project project) {
@@ -101,7 +107,7 @@ public class MysqlToH2Dlg extends JDialog {
         actionGroup.addAction(new AnAction("Convert", "Convert", AllIcons.Actions.Redo) {
             @Override
             public void actionPerformed(@NotNull AnActionEvent e) {
-                if (BaseUtils.isEmpty(mysqlEditor.getDocument().getText())) {
+                if (MyBaseUtils.isEmpty(mysqlEditor.getDocument().getText())) {
                     //提示内容为空
                     h2TxtPnl.setText("ERROR: 源内容为空");
                     return;
@@ -123,7 +129,7 @@ public class MysqlToH2Dlg extends JDialog {
 
             @Override
             public void update(@NotNull AnActionEvent e) {
-                e.getPresentation().setEnabled(!BaseUtils.isEmpty(h2TxtPnl.getText()));
+                e.getPresentation().setEnabled(!MyBaseUtils.isEmpty(h2TxtPnl.getText()));
             }
         });
         actionGroup.addAction(new AnAction("Refresh", "Refresh", AllIcons.Actions.GC) {
@@ -134,7 +140,6 @@ public class MysqlToH2Dlg extends JDialog {
                     h2TxtPnl.setText("");
                     mysqlEditor.getDocument().setText("");
                     mainPanel.updateUI();
-                    MysqlToH2Action.dlg.repaint();
                 } finally {
                     myDlg.setAlwaysOnTop(true);
                 }
@@ -182,7 +187,7 @@ public class MysqlToH2Dlg extends JDialog {
 
     private void saveFile(Project project) {
         final String h2Txt = h2TxtPnl.getText();
-        if (!BaseUtils.isEmpty(h2Txt)) {
+        if (!MyBaseUtils.isEmpty(h2Txt)) {
             VirtualFileWrapper targetFile = FileChooserFactory.getInstance().createSaveFileDialog(
                             new FileSaverDescriptor("Save to", "", "sql"), project)
                     .save(ProjectUtil.guessProjectDir(project), "h2.sql");
@@ -194,9 +199,12 @@ public class MysqlToH2Dlg extends JDialog {
 
     private void convert(JDialog myDlg) {
         try {
-            final String convertTxt = MysqlToH2Utils.convert(mysqlEditor.getDocument().getText());
+            final String convertTxt = MysqlToH2Helper.convert(mysqlEditor.getDocument().getText());
             h2TxtPnl.setText(convertTxt);
-            mysqlEditor.getDocument().setText("");
+            ApplicationManager.getApplication()
+                            .runWriteAction(() -> {
+                                mysqlEditor.getDocument().setText("");
+                            });
         } catch (Exception e) {
             myDlg.setAlwaysOnTop(false);
             Messages.showWarningDialog("Error:" + e.getMessage(), "Warn");
@@ -215,7 +223,7 @@ public class MysqlToH2Dlg extends JDialog {
                     .save(ProjectUtil.guessProjectDir(project), "h2.sql");
             if (targetFile != null) {
                 try {
-                    MysqlToH2Utils.convert(virtualFile.getPath(), targetFile.getFile().getCanonicalPath());
+                    MysqlToH2Helper.convert(virtualFile.getPath(), targetFile.getFile().getCanonicalPath());
                 } catch (IOException e) {
                     Messages.showWarningDialog("Error:" + e.getMessage(), "Warn");
                 }
@@ -226,11 +234,38 @@ public class MysqlToH2Dlg extends JDialog {
         }
     }
 
-
     public void open() {
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
+    }
+
+
+    private static Editor createEditor(Project project, FileType fileType, String content, boolean softWrap) {
+        EditorFactory editorFactory = EditorFactory.getInstance();
+        Document document = editorFactory.createDocument(content);
+        Editor editor = editorFactory.createEditor(document, project);
+        EditorSettings editorSettings = editor.getSettings();
+        // 关闭虚拟空间
+        editorSettings.setVirtualSpace(false);
+        // 关闭标记位置（断点位置）
+        editorSettings.setLineMarkerAreaShown(false);
+        // 关闭缩减指南
+        editorSettings.setIndentGuidesShown(false);
+        // 显示行号
+        editorSettings.setLineNumbersShown(true);
+        // 支持代码折叠
+        editorSettings.setFoldingOutlineShown(true);
+        // 不取光标行号
+        editorSettings.setCaretRowShown(false);
+        // 使用软换行
+        editorSettings.setUseSoftWraps(softWrap);
+        // 附加行，附加列（提高视野）
+        editorSettings.setAdditionalColumnsCount(3);
+        editorSettings.setAdditionalLinesCount(3);
+        ((EditorEx) editor).setHighlighter(EditorHighlighterFactory.getInstance()
+                .createEditorHighlighter(project, fileType));
+        return editor;
     }
 
 }
