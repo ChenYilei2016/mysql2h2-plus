@@ -19,4 +19,9 @@ public class DlgMetaContext {
      * 如果create index是在创建表外执行的, 是否融合到表内
      */
     public static boolean mergeOutCreateIndexIntoCreateTableSql = true;
+
+    /**
+     * beat function
+     */
+    public static boolean enableBeatFunction = true;
 }

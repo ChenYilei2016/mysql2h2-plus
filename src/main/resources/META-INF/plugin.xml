@@ -40,6 +40,12 @@ Instructions: Tools-->MysqlToH2<br>
     ]]></description>
 
     <change-notes><![CDATA[
+      <p>1.0.7</p>
+      <ul>
+        <li>1.enableBeatFunction</li>
+        <li>2.remove utf8mb4 if exist when use from_unixtime</li>
+      </ul>
+
       <p>1.0.6</p>
       <ul>
         <li>1.Code optimization</li>

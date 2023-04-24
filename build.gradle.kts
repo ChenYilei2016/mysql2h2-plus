@@ -1,12 +1,10 @@
-import org.gradle.internal.impldep.com.fasterxml.jackson.core.JsonPointer.compile
-
 plugins {
     id("java")
     id("org.jetbrains.intellij") version "1.6.0"
 }
 
 group = "com.chenyilei"
-version = "1.0.6"
+version = "1.0.7"
 
 repositories {
     mavenLocal()

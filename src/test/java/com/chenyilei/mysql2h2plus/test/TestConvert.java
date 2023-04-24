@@ -1,7 +1,7 @@
 package com.chenyilei.mysql2h2plus.test;
 
-import com.chenyilei.mysql2h2plus.visit.MysqlToH2Helper;
 import com.chenyilei.mysql2h2plus.utils.FileUtils;
+import com.chenyilei.mysql2h2plus.visit.MysqlToH2Helper;
 import org.junit.Test;
 
 import java.io.File;
@@ -68,10 +68,21 @@ public class TestConvert {
     }
 
     @Test
-    public void testVirtual(){
+    public void testVirtual() {
         File file = org.apache.commons.io.FileUtils.getFile("src/test/resources/test_virtual.sql");
         String s = FileUtils.copyToString(file, Charset.defaultCharset());
         String convert = MysqlToH2Helper.convert(s);
+        System.err.println(convert);
+    }
+
+    @Test
+    public void testVirtual_format_timestamp() {
+        File file = org.apache.commons.io.FileUtils.getFile("src/test/resources/testVirtual_format_timestamp.sql");
+        String s = FileUtils.copyToString(file, Charset.defaultCharset());
+        /////
+        System.err.println("================================================================");
+        String convert = MysqlToH2Helper.convert(s);
+        System.err.println("================================================================");
         System.err.println(convert);
     }
 

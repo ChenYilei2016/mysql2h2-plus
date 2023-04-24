@@ -2,8 +2,8 @@ package com.chenyilei.mysql2h2plus.dlg;
 
 import com.chenyilei.mysql2h2plus.constant.VERSION;
 import com.chenyilei.mysql2h2plus.context.DlgMetaContext;
-import com.chenyilei.mysql2h2plus.utils.MyBaseUtils;
 import com.chenyilei.mysql2h2plus.utils.FileUtils;
+import com.chenyilei.mysql2h2plus.utils.MyBaseUtils;
 import com.chenyilei.mysql2h2plus.visit.MysqlToH2Helper;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.*;
@@ -178,6 +178,18 @@ public class MysqlToH2Dialog extends JDialog {
             @Override
             public void setSelected(@NotNull AnActionEvent e, boolean state) {
                 DlgMetaContext.mergeOutCreateIndexIntoCreateTableSql = state;
+            }
+        });
+
+        actionGroup.addAction(new ToggleActionButton("启用测试功能, 如有报错取消勾选再尝试", AllIcons.Actions.SetDefault) {
+            @Override
+            public boolean isSelected(@NotNull AnActionEvent e) {
+                return DlgMetaContext.enableBeatFunction;
+            }
+
+            @Override
+            public void setSelected(@NotNull AnActionEvent e, boolean state) {
+                DlgMetaContext.enableBeatFunction = state;
             }
         });
 

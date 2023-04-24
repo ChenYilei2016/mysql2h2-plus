@@ -5,23 +5,28 @@ import com.alibaba.druid.sql.SQLUtils;
 import com.alibaba.druid.sql.ast.SQLName;
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.ast.expr.SQLIdentifierExpr;
-import com.alibaba.druid.sql.ast.statement.*;
+import com.alibaba.druid.sql.ast.statement.SQLCreateIndexStatement;
+import com.alibaba.druid.sql.ast.statement.SQLDropTableStatement;
+import com.alibaba.druid.sql.ast.statement.SQLSelectOrderByItem;
+import com.alibaba.druid.sql.ast.statement.SQLTableElement;
 import com.alibaba.druid.sql.dialect.mysql.ast.MySqlUnique;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlCreateTableStatement;
 import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlTableIndex;
 import com.alibaba.druid.util.JdbcConstants;
 import com.chenyilei.mysql2h2plus.context.DlgMetaContext;
-import com.chenyilei.mysql2h2plus.utils.MyBaseUtils;
 import com.chenyilei.mysql2h2plus.utils.FileUtils;
+import com.chenyilei.mysql2h2plus.utils.MyBaseUtils;
 
-import java.io.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MysqlToH2Helper {
-    private static Pattern createIndexPattern = Pattern.compile("CREATE\\s+(UNIQUE\\s)?\\w+\\s+(\\w+)\\s+ON\\s+\\w+");
+
     /**
      * 进行转换处
      * CREATE TABLE
@@ -69,7 +74,11 @@ public class MysqlToH2Helper {
             sb.append(";");
             sb.append("\n");
         }
-        return sb.toString();
+        String sql = sb.toString();
+        if (DlgMetaContext.enableBeatFunction) {
+            sql = removeMethodUtf8mb4Prefix(sql);
+        }
+        return sql;
     }
 
     private static void mergeOutCreateIndexIntoCreateTableSql(Map<String, MySqlCreateTableStatement> mySqlCreateTableStatementMap, List<SQLCreateIndexStatement> createIndexStatementList, List<SQLStatement> removeStatementList) {
@@ -106,22 +115,22 @@ public class MysqlToH2Helper {
     }
 
     /**
-     * 正则方式替换唯一索引 , 没啥用了
+     * `visual_task_last_heart_beat` varchar(32) GENERATED ALWAYS AS (date_format(from_unixtime(`task_last_heart_beat` / 1000), _utf8mb4 '%Y-%m-%d %H:%i:%s')),
+     * 删除掉 _utf8mb4 防止调用报错
      */
-    private static String createIndexUnique(String h2Sql) {
-        Matcher matcher = createIndexPattern.matcher(h2Sql);
+    private static Pattern from_unixtime_utf8mb4_Pattern = Pattern.compile("from_unixtime\\s*\\(.*\\)\\s*,(.*)'.*'");
+
+    private static String removeMethodUtf8mb4Prefix(String h2Sql) {
+        Matcher matcher = from_unixtime_utf8mb4_Pattern.matcher(h2Sql);
 
         StringBuffer sb = new StringBuffer();
-        //find 是向前推进的
-        //group(0) 原句
-        //group(1~..) 分组
         while (matcher.find()) {
-
-            String createIndexLine = matcher.group(0);
-            String indexName = matcher.group(2);
-            String uniqueIndexLine = createIndexLine.replace(indexName, indexName + "_" + MysqlToH2Visitor.atomicInteger.getAndIncrement());
-
-            matcher.appendReplacement(sb, uniqueIndexLine);
+            //find 是向前推进的
+            //group(0) 原句
+            //group(1~..) 分组
+            String all = matcher.group(0);
+            String tag = matcher.group(1);
+            matcher.appendReplacement(sb, all.replace(tag, ""));
         }
         matcher.appendTail(sb);
         return sb.toString();
