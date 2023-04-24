@@ -5,7 +5,9 @@ IDEA插件市场搜索即可安装
 也可以打包后直接拖入IDEA并使用 / 或直接下载 https://github.com/ChenYilei2016/mysql2h2-plus/blob/master/build/distributions
 
 <h2>如何使用</h2>
+  
 ![image](https://user-images.githubusercontent.com/31011150/190112719-871a14fc-82fc-45fe-a21d-5a4e6a1f0365.png)  
+  
 ![img.png](img.png)
 
 <h2>what's new</h2>
