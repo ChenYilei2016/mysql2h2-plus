@@ -11,6 +11,11 @@ IDEA插件市场搜索即可安装
 ![img.png](img.png)
 
 <h2>what's new</h2>
+      <p>1.0.7</p>
+      <ul>
+        <li>1.enableBeatFunction</li>
+        <li>2.remove utf8mb4 if exist when use from_unixtime</li>
+      </ul>
       <p>1.0.6</p>
       <ul>
         <li>1.Code optimization</li>
