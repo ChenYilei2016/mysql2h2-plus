@@ -75,7 +75,7 @@ public class MysqlToH2Helper {
             sb.append("\n");
         }
         String sql = sb.toString();
-        if (DlgMetaContext.enableBeatFunction) {
+        if (DlgMetaContext.enableBetaFunction) {
             sql = removeMethodUtf8mb4Prefix(sql);
         }
         return sql;

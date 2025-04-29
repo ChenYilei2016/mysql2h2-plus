@@ -23,5 +23,5 @@ public class DlgMetaContext {
     /**
      * beat function
      */
-    public static boolean enableBeatFunction = true;
+    public static boolean enableBetaFunction = true;
 }

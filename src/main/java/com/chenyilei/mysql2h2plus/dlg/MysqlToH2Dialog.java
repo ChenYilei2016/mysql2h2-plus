@@ -184,12 +184,12 @@ public class MysqlToH2Dialog extends JDialog {
         actionGroup.addAction(new ToggleActionButton("启用测试功能, 如有报错取消勾选再尝试", AllIcons.Actions.SetDefault) {
             @Override
             public boolean isSelected(@NotNull AnActionEvent e) {
-                return DlgMetaContext.enableBeatFunction;
+                return DlgMetaContext.enableBetaFunction;
             }
 
             @Override
             public void setSelected(@NotNull AnActionEvent e, boolean state) {
-                DlgMetaContext.enableBeatFunction = state;
+                DlgMetaContext.enableBetaFunction = state;
             }
         });
 

@@ -4,12 +4,16 @@ import com.alibaba.druid.sql.ast.*;
 import com.alibaba.druid.sql.ast.expr.SQLBinaryExpr;
 import com.alibaba.druid.sql.ast.expr.SQLCharExpr;
 import com.alibaba.druid.sql.ast.expr.SQLIdentifierExpr;
+import com.alibaba.druid.sql.ast.expr.SQLMethodInvokeExpr;
 import com.alibaba.druid.sql.ast.statement.*;
 import com.alibaba.druid.sql.dialect.mysql.ast.MySqlKey;
 import com.alibaba.druid.sql.dialect.mysql.ast.MySqlPrimaryKey;
 import com.alibaba.druid.sql.dialect.mysql.ast.MySqlUnique;
 import com.alibaba.druid.sql.dialect.mysql.ast.MysqlForeignKey;
-import com.alibaba.druid.sql.dialect.mysql.ast.statement.*;
+import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlCreateTableStatement;
+import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlLockTableStatement;
+import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlTableIndex;
+import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlUnlockTablesStatement;
 import com.alibaba.druid.sql.dialect.mysql.visitor.MySqlOutputVisitor;
 import com.chenyilei.mysql2h2plus.context.DlgMetaContext;
 
@@ -65,8 +69,8 @@ public class MysqlToH2Visitor extends MySqlOutputVisitor {
             SQLCharacterDataType dataType = (SQLCharacterDataType) x;
             dataType.setCharSetName((String) null);
             dataType.setCollate((String) null);
-        } else if (!"double".equals(x.getName()) && !"float".equals(x.getName())) {
-            if ("enum".equals(x.getName())) {
+        } else if (!"double".equalsIgnoreCase(x.getName()) && !"float".equalsIgnoreCase(x.getName())) {
+            if ("enum".equalsIgnoreCase(x.getName())) {
                 ((SQLColumnDefinition) x.getParent()).setCharsetExpr((SQLExpr) null);
             }
         } else {
@@ -81,6 +85,7 @@ public class MysqlToH2Visitor extends MySqlOutputVisitor {
         return super.visit(x);
     }
 
+
     public boolean visit(MySqlUnique x) {
         x.setName(unquote(x.getName().getSimpleName()) + "_" + atomicInteger.incrementAndGet());
         x.setIndexType((String) null); // bTree
@@ -91,16 +96,27 @@ public class MysqlToH2Visitor extends MySqlOutputVisitor {
     public boolean visit(SQLCreateIndexStatement x) {
         x.setUsing(null);
         SQLName name = x.getName();
-        if (name instanceof  SQLIdentifierExpr) {
+        if (name instanceof SQLIdentifierExpr) {
             SQLIdentifierExpr sqlIdentifierExpr = (SQLIdentifierExpr) name;
             sqlIdentifierExpr.setName(unquote(x.getName().getSimpleName()) + "_" + atomicInteger.incrementAndGet());
         }
         return super.visit(x);
     }
 
+
     public boolean visit(MySqlTableIndex x) {
         x.setName(new SQLIdentifierExpr(unquote(x.getName().getSimpleName()) + "_" + atomicInteger.incrementAndGet()));
         x.setIndexType((String) null);
+        //做length去除
+        if (DlgMetaContext.enableBetaFunction) {
+            if (null != x.getColumns()) {
+                for (SQLSelectOrderByItem column : x.getColumns()) {
+                    if (column.getExpr() instanceof SQLMethodInvokeExpr) {
+                        column.setExpr(new SQLIdentifierExpr(((SQLMethodInvokeExpr) column.getExpr()).getMethodName()));
+                    }
+                }
+            }
+        }
         return super.visit(x);
     }
 
@@ -109,7 +125,6 @@ public class MysqlToH2Visitor extends MySqlOutputVisitor {
         x.setIndexType((String) null);
         return super.visit(x);
     }
-
 
 
     public boolean visit(MySqlLockTableStatement x) {
@@ -178,14 +193,14 @@ public class MysqlToH2Visitor extends MySqlOutputVisitor {
                 }
 
                 target = ((SQLAssignItem) iterator.next()).getTarget().toString();
-            } while (!"SQL_MODE".equals(target) && !"time_zone".equals(target));
+            } while (!"SQL_MODE".equalsIgnoreCase(target) && !"time_zone".equalsIgnoreCase(target));
 
             iterator.remove();
         }
     }
 
     public boolean visit(SQLCharExpr x) {
-        if ("0000-00-00 00:00:00".equals(x.getText())) {
+        if ("0000-00-00 00:00:00".equalsIgnoreCase(x.getText())) {
             x.setText("0001-01-01 00:00:00");
         }
 
