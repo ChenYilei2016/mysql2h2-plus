@@ -30,7 +30,6 @@ import com.intellij.openapi.vfs.VirtualFileWrapper;
 import com.intellij.ui.IconManager;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.ScrollPaneFactory;
-import com.intellij.ui.ToggleActionButton;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -76,8 +75,10 @@ public class MysqlToH2Dialog extends JDialog {
                 if (Desktop.isDesktopSupported()) {
                     try {
                         Desktop.getDesktop().browse(uri);
-                    } catch (IOException ignore) {  }
-                } else { }
+                    } catch (IOException ignore) {
+                    }
+                } else {
+                }
             });
             mainPanel.add(button, BorderLayout.SOUTH);
         } catch (Throwable ignore) {
@@ -169,7 +170,7 @@ public class MysqlToH2Dialog extends JDialog {
             }
         });
 
-        actionGroup.addAction(new ToggleActionButton("如果create index是在创建表外执行的, 是否融合到表内", AllIcons.Actions.SetDefault) {
+        actionGroup.addAction(new ToggleAction("如果create index是在创建表外执行的, 是否融合到表内", "如果create index是在创建表外执行的, 是否融合到表内", AllIcons.Actions.SetDefault) {
             @Override
             public boolean isSelected(@NotNull AnActionEvent e) {
                 return DlgMetaContext.mergeOutCreateIndexIntoCreateTableSql;
@@ -181,7 +182,7 @@ public class MysqlToH2Dialog extends JDialog {
             }
         });
 
-        actionGroup.addAction(new ToggleActionButton("启用测试功能, 如有报错取消勾选再尝试", AllIcons.Actions.SetDefault) {
+        actionGroup.addAction(new ToggleAction("启用测试功能, 如有报错取消勾选再尝试", "启用测试功能, 如有报错取消勾选再尝试", AllIcons.Actions.SetDefault) {
             @Override
             public boolean isSelected(@NotNull AnActionEvent e) {
                 return DlgMetaContext.enableBetaFunction;
@@ -214,9 +215,9 @@ public class MysqlToH2Dialog extends JDialog {
             final String convertTxt = MysqlToH2Helper.convert(mysqlEditor.getDocument().getText());
             h2TxtPnl.setText(convertTxt);
             ApplicationManager.getApplication()
-                            .runWriteAction(() -> {
-                                mysqlEditor.getDocument().setText("");
-                            });
+                    .runWriteAction(() -> {
+                        mysqlEditor.getDocument().setText("");
+                    });
         } catch (Exception e) {
             myDlg.setAlwaysOnTop(false);
             Messages.showWarningDialog("Error:" + e.getMessage(), "Warn");
