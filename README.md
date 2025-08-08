@@ -10,6 +10,8 @@ IDEA插件市场搜索即可安装
   
 ![img.png](img.png)
 
+![20250808-eg1.png](docs/images/20250808-eg1.png)
+
 <h2>what's new</h2>
 <p>1.0.8</p>
 <ul>
@@ -46,3 +48,9 @@ IDEA插件市场搜索即可安装
 <li>支持create索引融合进create表sql中  </li>
 <li>支持适配mysql的虚拟列  </li>
 
+
+---
+
+### 2025-08-08 已下载人数, 感谢大家支持
+
+![20250808-download.png](docs/images/20250808-download.png)
